@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"agni/detectors"
+	"github.com/Aadi-IRON/agni/detectors"
 
 	"github.com/spf13/cobra"
 )
