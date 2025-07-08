@@ -21,3 +21,8 @@ Whether you’re working on large enterprise codebases or tight microservices, A
 go install github.com/Aadi-IRON/agni/cmd/agni@latest
 
 on terminal->>> agni check 
+
+## If already installed and want latest version
+-> go clean -modcache
+-> go install github.com/Aadi-IRON/agni/cmd/agni@latest
+And then, agni check 
