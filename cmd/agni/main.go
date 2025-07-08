@@ -1,4 +1,3 @@
-// cmd/agni/main.go
 package main
 
 import (

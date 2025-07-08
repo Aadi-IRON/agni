@@ -10,11 +10,8 @@ import (
 	"strings"
 )
 
+// Detects unused params throughout the project.
 func DetectUnusedParams(filePath string) {
-	// var filePath string
-	// Replace with the path to your directory
-	// fmt.Printf("Enter the name of the project folder for analysis: ")
-	// fmt.Scanln(&filePath)
 	if filePath == "" {
 		fmt.Println("Please pass a valid directory path. ")
 		return
@@ -64,8 +61,8 @@ func CheckUnusedVars(fileName string) error {
 		return fmt.Errorf("error while opening/parsing file: %v", err)
 	}
 	// Analyze function declarations in the file
-	ast.Inspect(node, func(n ast.Node) bool {
-		if function, ok := n.(*ast.FuncDecl); ok {
+	ast.Inspect(node, func(astNode ast.Node) bool {
+		if function, ok := astNode.(*ast.FuncDecl); ok {
 			AnalyzeFunc(function, fileName)
 		}
 		return true
@@ -77,9 +74,9 @@ func CheckUnusedVars(fileName string) error {
 func AnalyzeFunc(function *ast.FuncDecl, fileName string) {
 	varUsed := InitializeVarUsage(function.Type.Params)
 	// Mark variables as used if they appear in the function body
-	MarkUsedVariables(function.Body, varUsed)
+	MarkUsedVars(function.Body, varUsed)
 	// Collect and print unused variables
-	if unusedVars := GetUnusedVariables(varUsed); len(unusedVars) > 0 {
+	if unusedVars := GetUnusedVars(varUsed); len(unusedVars) > 0 {
 		fmt.Printf("File '%s': Function '%s' has unused variables: %s\n", fileName, function.Name.Name, strings.Join(unusedVars, ", "))
 	}
 }
@@ -99,12 +96,12 @@ func InitializeVarUsage(params *ast.FieldList) map[string]bool {
 }
 
 // Inspects a function body to mark variables as used.
-func MarkUsedVariables(body *ast.BlockStmt, varUsed map[string]bool) {
+func MarkUsedVars(body *ast.BlockStmt, varUsed map[string]bool) {
 	if body == nil {
 		return
 	}
-	ast.Inspect(body, func(n ast.Node) bool {
-		switch node := n.(type) {
+	ast.Inspect(body, func(astNode ast.Node) bool {
+		switch node := astNode.(type) {
 		case *ast.Ident:
 			// Mark identifiers as used
 			if _, exists := varUsed[node.Name]; exists {
@@ -112,14 +109,14 @@ func MarkUsedVariables(body *ast.BlockStmt, varUsed map[string]bool) {
 			}
 		case *ast.CallExpr:
 			// Check arguments in function calls
-			MarkArgumentsAsUsed(node.Args, varUsed)
+			MarkArgsAsUsed(node.Args, varUsed)
 		}
 		return true
 	})
 }
 
 // Marks variables used as arguments in function calls.
-func MarkArgumentsAsUsed(args []ast.Expr, varUsed map[string]bool) {
+func MarkArgsAsUsed(args []ast.Expr, varUsed map[string]bool) {
 	for _, arg := range args {
 		if ident, ok := arg.(*ast.Ident); ok {
 			if _, exists := varUsed[ident.Name]; exists {
@@ -130,7 +127,7 @@ func MarkArgumentsAsUsed(args []ast.Expr, varUsed map[string]bool) {
 }
 
 // Collects variable names that were never marked as used.
-func GetUnusedVariables(varUsed map[string]bool) []string {
+func GetUnusedVars(varUsed map[string]bool) []string {
 	unusedVars := []string{}
 	for varName, used := range varUsed {
 		if !used {

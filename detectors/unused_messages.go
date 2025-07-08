@@ -11,6 +11,43 @@ import (
 	"strings"
 )
 
+// Detects unused messages throughout the directory.
+func DetectUnusedMessages(filePath string) {
+	if filePath == "" {
+		fmt.Println("Please pass a valid directory path. ")
+		return
+	}
+	messageFilePath := filePath + "/config/message.go"
+	// Extract all keys from the Messages map in message.go
+	keys, err := ExtractKeysFromMessages(messageFilePath)
+	if err != nil {
+		fmt.Println("Error extracting keys from message.go:", err)
+		return
+	}
+	// Check if each key is used in the project
+	var unusedKeys []string
+	for _, key := range keys {
+		found, err := SearchKeyInProject(filePath, key)
+		if err != nil {
+			fmt.Println("Error searching for key in the project:", err)
+			return
+		}
+		if !found {
+			unusedKeys = append(unusedKeys, key)
+		}
+	}
+	// Print results
+	if len(unusedKeys) == 0 {
+		fmt.Println("✅  All keys in messages.go file are used in the project.")
+	} else {
+		fmt.Println()
+		fmt.Println("Unused keys in messages.go file:-> ")
+		for _, key := range unusedKeys {
+			fmt.Println("- ", key)
+		}
+	}
+}
+
 // SearchKeyInProject searches for a specific key across all .go files in the project
 func SearchKeyInProject(rootDir, searchKey string) (bool, error) {
 	found := false
@@ -56,60 +93,13 @@ func SearchKeyInFile(filePath, searchKey string) (bool, error) {
 	return false, scanner.Err()
 }
 
-func DetectUnusedMessages(filePath string) {
-	// Define the paths
-	// var filePath string
-	// Replace with the path to your directory
-	// fmt.Printf("Enter the name of the project folder for analysis: ")
-	// fmt.Scanln(&filePath)
-	if filePath == "" {
-		fmt.Println("Please pass a valid directory path. ")
-		return
-	}
-	// projectRoot := "/home/iron/work/Development/" + filePath                            // Path to the project root
-	// messageFilePath := "/home/iron/work/Development/" + filePath + "/config/message.go" // Path to the message.go file
-
-	messageFilePath := filePath + "/config/message.go"
-	// Extract all keys from the Messages map in message.go
-	keys, err := ExtractKeysFromMessages(messageFilePath)
-	// fmt.Println("messages:--", keys)
-	if err != nil {
-		fmt.Println("Error extracting keys from message.go:", err)
-		return
-	}
-
-	// Check if each key is used in the project
-	var unusedKeys []string
-	for _, key := range keys {
-		found, err := SearchKeyInProject(filePath, key)
-		if err != nil {
-			fmt.Println("Error searching for key in the project:", err)
-			return
-		}
-		if !found {
-			unusedKeys = append(unusedKeys, key)
-		}
-	}
-
-	// Print results
-	if len(unusedKeys) == 0 {
-		fmt.Println("All keys in messages.go file are used in the project.")
-	} else {
-		fmt.Println("Unused keys in messages.go file:")
-		for _, key := range unusedKeys {
-			fmt.Println("- ", key)
-		}
-	}
-}
-
 // ExtractKeysFromMessages extracts all keys from the Messages map in message.go
 func ExtractKeysFromMessages(messageFilePath string) ([]string, error) {
 	var keys []string
 
 	// Read and parse the message.go file
-	fset := token.NewFileSet()
-	node, err := parser.ParseFile(fset, messageFilePath, nil, parser.AllErrors)
-	// fmt.Println("Error parsing", err)
+	functionSet := token.NewFileSet()
+	node, err := parser.ParseFile(functionSet, messageFilePath, nil, parser.AllErrors)
 	if err != nil {
 		fmt.Println("1")
 		return nil, err

@@ -8,41 +8,29 @@ import (
 	"strings"
 )
 
-// ExtractConstantsFromFile reads `const.go` and extracts constants defined in it.
-func ExtractConstsFromFile(filePath string) ([]string, error) {
-	file, err := os.Open(filePath)
+// Detects all unused constants present in the directory.
+func DetectUnusedConstants(filePath string) {
+	if filePath == "" {
+		fmt.Println("Please pass a valid directory path.")
+		return
+	}
+	constFile := filePath + "/config/const.go"
+	// Find unused constants
+	unusedConsts, err := FindUnusedConsts(filePath, constFile)
 	if err != nil {
-		return nil, err
+		fmt.Println("Error:", err)
+		return
 	}
-	defer file.Close()
-	var constants []string
-	scanner := bufio.NewScanner(file)
-	constBlock := false // Track if inside a `const` block
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		// Detect start of a `const` block
-		if strings.HasPrefix(line, "const (") {
-			constBlock = true
-			continue
-		}
-		// Detect end of a `const` block
-		if constBlock && line == ")" {
-			constBlock = false
-			continue
-		}
-		// Extract constant names from the block
-		if constBlock {
-			// Assume constant names are the first word before the `=` sign
-			parts := strings.Fields(line)
-			if len(parts) > 0 {
-				constants = append(constants, parts[0])
-			}
-		}
+	// Output results
+	if len(unusedConsts) == 0 {
+		fmt.Println(" ✅ All constants in const.go are used in the project.")
+		return
 	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
+	fmt.Println()
+	fmt.Println("Unused constants in const.go:-> ")
+	for _, constant := range unusedConsts {
+		fmt.Printf("- %s\n", constant)
 	}
-	return constants, nil
 }
 
 // SearchConstantInProject checks if a constant is used in any `.go` file (excluding `const.go`).
@@ -94,31 +82,39 @@ func FindUnusedConsts(projectDir, constFile string) ([]string, error) {
 	return unusedConsts, nil
 }
 
-func DetectUnusedConstants(filePath string) {
-	// Define the paths
-	// var filePath string
-	// fmt.Printf("Enter the name of the project folder for analysis: ")
-	// fmt.Scanln(&filePath)
-	if filePath == "" {
-		fmt.Println("Please pass a valid directory path.")
-		return
-	}
-	// prjRoot := "/home/iron/work/Development/" + filePath                        // Path to the project root
-	// constFile := "/home/iron/work/Development/" + filePath + "/config/const.go" // Path to const.go file
-	constFile := filePath + "/config/const.go"
-	// Find unused constants
-	unusedConsts, err := FindUnusedConsts(filePath, constFile)
+// ExtractConstantsFromFile reads `const.go` and extracts constants defined in it.
+func ExtractConstsFromFile(filePath string) ([]string, error) {
+	file, err := os.Open(filePath)
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		return nil, err
 	}
-	// Output results
-	if len(unusedConsts) == 0 {
-		fmt.Println("All constants in const.go are used in the project.")
-		return
+	defer file.Close()
+	var constants []string
+	scanner := bufio.NewScanner(file)
+	constBlock := false // Track if inside a `const` block
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		// Detect start of a `const` block
+		if strings.HasPrefix(line, "const (") {
+			constBlock = true
+			continue
+		}
+		// Detect end of a `const` block
+		if constBlock && line == ")" {
+			constBlock = false
+			continue
+		}
+		// Extract constant names from the block
+		if constBlock {
+			// Assume constant names are the first word before the `=` sign
+			parts := strings.Fields(line)
+			if len(parts) > 0 {
+				constants = append(constants, parts[0])
+			}
+		}
 	}
-	fmt.Println("Unused constants in const.go:")
-	for _, constant := range unusedConsts {
-		fmt.Printf("- %s\n", constant)
+	if err := scanner.Err(); err != nil {
+		return nil, err
 	}
+	return constants, nil
 }
