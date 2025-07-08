@@ -19,8 +19,10 @@ func DetectUnusedMessages(filePath string) {
 	}
 	// Extract all keys from the Messages map in message.go
 	keys, err := ExtractKeysFromMessages(filePath + "/config/message.go")
+	var oldVersion bool
 	if err != nil {
 		keys, err = ExtractKeysFromMessages(filePath + "/config/Message.go")
+		oldVersion = true
 		if err != nil {
 			fmt.Println("Error extracting keys from message.go:", err)
 			return
@@ -29,7 +31,7 @@ func DetectUnusedMessages(filePath string) {
 	// Check if each key is used in the project
 	var unusedKeys []string
 	for _, key := range keys {
-		found, err := SearchKeyInProject(filePath, key)
+		found, err := SearchKeyInProject(filePath, key, oldVersion)
 		if err != nil {
 			fmt.Println("Error searching for key in the project:", err)
 			return
@@ -51,7 +53,7 @@ func DetectUnusedMessages(filePath string) {
 }
 
 // SearchKeyInProject searches for a specific key across all .go files in the project
-func SearchKeyInProject(rootDir, searchKey string) (bool, error) {
+func SearchKeyInProject(rootDir, searchKey string, oldVersion bool) (bool, error) {
 	found := false
 
 	// Walk through all files in the project
@@ -59,9 +61,12 @@ func SearchKeyInProject(rootDir, searchKey string) (bool, error) {
 		if err != nil {
 			return err
 		}
-
+		condition := !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(path, "message.go")
+		if oldVersion {
+			condition = !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(path, "Message.go")
+		}
 		// Process only .go files, excluding the message.go file itself
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(path, "message.go") && (!strings.HasSuffix(path, "Message.go")) {
+		if condition {
 			fileFound, err := SearchKeyInFile(path, searchKey)
 			if err != nil {
 				return err
