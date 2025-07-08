@@ -14,9 +14,8 @@ func DetectUnusedConstants(filePath string) {
 		fmt.Println("Please pass a valid directory path.")
 		return
 	}
-	constFile := filePath + "/config/const.go"
 	// Find unused constants
-	unusedConsts, err := FindUnusedConsts(filePath, constFile)
+	unusedConsts, err := FindUnusedConsts(filePath)
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -64,14 +63,17 @@ func SearchConstantInProject(projectDir, constant, excludeFile string) (bool, er
 }
 
 // FindUnusedConstants finds constants in `const.go` that are not used anywhere in the project.
-func FindUnusedConsts(projectDir, constFile string) ([]string, error) {
-	constants, err := ExtractConstsFromFile(constFile)
+func FindUnusedConsts(filePath string) ([]string, error) {
+	constants, err := ExtractConstsFromFile(filePath + "/config/const.go")
 	if err != nil {
-		return nil, err
+		constants, err = ExtractConstsFromFile(filePath + "/config/Const.go")
+		if err != nil {
+			return nil, err
+		}
 	}
 	var unusedConsts []string
 	for _, constant := range constants {
-		used, err := SearchConstantInProject(projectDir, constant, "const.go")
+		used, err := SearchConstantInProject(filePath, constant, "const.go")
 		if err != nil {
 			return nil, err
 		}

@@ -17,12 +17,14 @@ func DetectUnusedMessages(filePath string) {
 		fmt.Println("Please pass a valid directory path. ")
 		return
 	}
-	messageFilePath := filePath + "/config/message.go"
 	// Extract all keys from the Messages map in message.go
-	keys, err := ExtractKeysFromMessages(messageFilePath)
+	keys, err := ExtractKeysFromMessages(filePath + "/config/message.go")
 	if err != nil {
-		fmt.Println("Error extracting keys from message.go:", err)
-		return
+		keys, err = ExtractKeysFromMessages(filePath + "/config/Message.go")
+		if err != nil {
+			fmt.Println("Error extracting keys from message.go:", err)
+			return
+		}
 	}
 	// Check if each key is used in the project
 	var unusedKeys []string
