@@ -65,15 +65,17 @@ func SearchConstantInProject(projectDir, constant, excludeFile string) (bool, er
 // FindUnusedConstants finds constants in `const.go` that are not used anywhere in the project.
 func FindUnusedConsts(filePath string) ([]string, error) {
 	constants, err := ExtractConstsFromFile(filePath + "/config/const.go")
+	excludeFile := "const.go"
 	if err != nil {
 		constants, err = ExtractConstsFromFile(filePath + "/config/Const.go")
+		excludeFile = "Const.go"
 		if err != nil {
 			return nil, err
 		}
 	}
 	var unusedConsts []string
 	for _, constant := range constants {
-		used, err := SearchConstantInProject(filePath, constant, "const.go")
+		used, err := SearchConstantInProject(filePath, constant, excludeFile)
 		if err != nil {
 			return nil, err
 		}

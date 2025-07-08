@@ -61,7 +61,7 @@ func SearchKeyInProject(rootDir, searchKey string) (bool, error) {
 		}
 
 		// Process only .go files, excluding the message.go file itself
-		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(path, "message.go") {
+		if !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && (!strings.HasSuffix(path, "message.go") || (!strings.HasSuffix(path, "Message.go"))) {
 			fileFound, err := SearchKeyInFile(path, searchKey)
 			if err != nil {
 				return err
