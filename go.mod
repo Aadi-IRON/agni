@@ -1,6 +1,7 @@
 module github.com/Aadi-IRON/agni
 
-go 1.24.4
+go 1.21
+
 
 require github.com/spf13/cobra v1.9.1
 
