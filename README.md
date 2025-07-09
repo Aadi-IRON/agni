@@ -1,6 +1,8 @@
 # 🔥 agni - A Modular Go Code Analyzer
 
-Agni is a blazing-fast, modular static code analysis tool built in Go using the Cobra CLI framework. Designed to enhance code hygiene and readability, Agni scans your Go projects to flag patterns that impact quality, maintainability, and scale.
+Agni is a blazing-fast, modular static code analysis tool built in Go. Designed to enhance code hygiene and readability, Agni scans your Go projects to flag patterns that impact quality, maintainability, and scalability.
+
+With a lightweight CLI interface, Agni integrates seamlessly into developer workflows, offering clarity without complexity.
 
 Whether you’re working on large enterprise codebases or tight microservices, Agni keeps your code sharp.
 
