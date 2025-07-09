@@ -50,6 +50,7 @@ func DetectUnusedMessages(filePath string) {
 			fmt.Println("- ", key)
 		}
 	}
+	fmt.Println("----------------------------")
 }
 
 // SearchKeyInProject searches for a specific key across all .go files in the project

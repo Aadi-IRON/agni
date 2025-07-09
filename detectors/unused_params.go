@@ -19,6 +19,7 @@ func DetectUnusedParams(filePath string) {
 	if err := ProcessDirectory(filePath); err != nil {
 		fmt.Println("Error occurred :", err)
 	}
+	fmt.Println("----------------------------")
 }
 
 // ProcessDirectory processes all .go files in the specified directory.

@@ -22,7 +22,7 @@ func DetectUnusedConstants(filePath string) {
 	}
 	// Output results
 	if len(unusedConsts) == 0 {
-		fmt.Println(" ✅ All constants in const.go are used in the project.")
+		fmt.Println("✅  All constants in const.go are used in the project.")
 		return
 	}
 	fmt.Println()
@@ -30,6 +30,7 @@ func DetectUnusedConstants(filePath string) {
 	for _, constant := range unusedConsts {
 		fmt.Printf("- %s\n", constant)
 	}
+	fmt.Println("----------------------------")
 }
 
 // SearchConstantInProject checks if a constant is used in any `.go` file (excluding `const.go`).
