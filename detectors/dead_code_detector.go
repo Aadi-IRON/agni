@@ -8,6 +8,7 @@ import (
 
 // RunDeadCode checks if dead code is installed; if not, it installs it, then runs it
 func RunDeadCode(path string) {
+	fmt.Println("🔍 Scanning for dead code... Time to clean the skeletons from your closet 🧹")
 	// Check if 'deadcode' is available in PATH
 	_, err := exec.LookPath("deadcode")
 	if err != nil {
@@ -36,4 +37,6 @@ func RunDeadCode(path string) {
 		fmt.Println("🧠 Deadcode report:")
 		fmt.Println(string(output))
 	}
+	fmt.Println("⚠️  Note: Some functions may be falsely flagged as unused.")
+	fmt.Println(">>> Always cross-check before deletion to avoid accidental removal of valid code.")
 }
