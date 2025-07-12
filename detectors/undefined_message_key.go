@@ -23,6 +23,7 @@ func DetectUnDefinedMessageKeys(filePath string) {
 		fmt.Println("❌ Please enter a valid project folder name.")
 		return
 	}
+
 	usedKeys := make(map[string]struct{})
 	definedKeys := make(map[string]struct{})
 
@@ -31,15 +32,21 @@ func DetectUnDefinedMessageKeys(filePath string) {
 			fmt.Printf("Error reading file %s: %v\n", path, err)
 			return nil
 		}
+
 		if !strings.HasSuffix(path, ".go") {
 			return nil
 		}
-		// Extract defined keys only from messages.go
-		if path == filePath+"config/message.go" || path == filePath+"config/Message.go" || path == filePath+"config/messages.go" || path == filePath+"config/Messages.go" {
-			collectDefinedKeys(path, definedKeys)
+
+		// Get base name of the file and check if it matches any message file pattern
+		base := filepath.Base(path)
+		lower := strings.ToLower(base)
+
+		if lower == "message.go" || lower == "messages.go" {
+			CollectDefinedKeys(path, definedKeys)
 		} else {
-			collectUsedKeys(path, usedKeys)
+			CollectUsedKeys(path, usedKeys)
 		}
+
 		return nil
 	})
 
@@ -47,6 +54,7 @@ func DetectUnDefinedMessageKeys(filePath string) {
 		fmt.Printf("Error walking files: %v\n", err)
 		return
 	}
+
 	fmt.Println()
 	// Compare and report
 	fmt.Println("🔍 Missing Keys (Used but not defined):")
@@ -63,7 +71,7 @@ func DetectUnDefinedMessageKeys(filePath string) {
 	}
 }
 
-func collectUsedKeys(filePath string, usedKeys map[string]struct{}) {
+func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
 	fset := token.NewFileSet()
 	node, err := parser.ParseFile(fset, filePath, nil, parser.AllErrors)
 	if err != nil {
@@ -101,7 +109,7 @@ func collectUsedKeys(filePath string, usedKeys map[string]struct{}) {
 	})
 }
 
-func collectDefinedKeys(filePath string, definedKeys map[string]struct{}) {
+func CollectDefinedKeys(filePath string, definedKeys map[string]struct{}) {
 	fset := token.NewFileSet()
 	node, err := parser.ParseFile(fset, filePath, nil, parser.AllErrors)
 	if err != nil {
