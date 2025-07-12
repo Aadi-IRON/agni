@@ -15,6 +15,7 @@ Whether you're working on large enterprise codebases or tight microservices, **A
 - 📁 Detect dead code via automatic [`deadcode`](https://pkg.go.dev/golang.org/x/tools/cmd/deadcode) integration  
 - 🔍 Spot unused keys in `Messages`, `FailMessages`, etc.  
 - 🧼 Modular design – plug in more detectors easily  
+- 🚀 Detect the undefined keys used in messageMap in through out the project. 
 > ⚙️ More powerful static checks are coming in future versions!
 
 ---
