@@ -65,10 +65,12 @@ func DetectUnDefinedMessageKeys(filePath string) {
 			missing++
 		}
 	}
-
 	if missing == 0 {
 		fmt.Println("🎉 No missing keys! Everything is defined.")
+		fmt.Println("----------------------------")
+		return
 	}
+	fmt.Println("----------------------------")
 }
 
 func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
