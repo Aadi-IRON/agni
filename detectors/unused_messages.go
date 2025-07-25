@@ -19,19 +19,27 @@ func DetectUnusedMessages(filePath string) {
 	}
 	// Extract all keys from the Messages map in message.go
 	keys, err := ExtractKeysFromMessages(filePath + "/config/message.go")
-	var oldVersion bool
+	messageFileName := "message.go"
 	if err != nil {
 		keys, err = ExtractKeysFromMessages(filePath + "/config/Message.go")
-		oldVersion = true
+		messageFileName = "Message.go"
 		if err != nil {
-			fmt.Println("Error extracting keys from message.go:", err)
-			return
+			keys, err = ExtractKeysFromMessages(filePath + "/config/messages.go")
+			messageFileName = "messages.go"
+			if err != nil {
+				keys, err = ExtractKeysFromMessages(filePath + "/config/Messages.go")
+				messageFileName = "Messages.go"
+				if err != nil {
+					fmt.Println("Error occurred while extracting keys", err)
+					return
+				}
+			}
 		}
 	}
 	// Check if each key is used in the project
 	var unusedKeys []string
 	for _, key := range keys {
-		found, err := SearchKeyInProject(filePath, key, oldVersion)
+		found, err := SearchKeyInProject(filePath, key, messageFileName)
 		if err != nil {
 			fmt.Println("Error searching for key in the project:", err)
 			return
@@ -54,7 +62,7 @@ func DetectUnusedMessages(filePath string) {
 }
 
 // SearchKeyInProject searches for a specific key across all .go files in the project
-func SearchKeyInProject(rootDir, searchKey string, oldVersion bool) (bool, error) {
+func SearchKeyInProject(rootDir, searchKey string, messageFileName string) (bool, error) {
 	found := false
 
 	// Walk through all files in the project
@@ -62,10 +70,7 @@ func SearchKeyInProject(rootDir, searchKey string, oldVersion bool) (bool, error
 		if err != nil {
 			return err
 		}
-		condition := !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(path, "message.go")
-		if oldVersion {
-			condition = !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(path, "Message.go")
-		}
+		condition := !info.IsDir() && strings.HasSuffix(info.Name(), ".go") && !strings.HasSuffix(path, messageFileName)
 		// Process only .go files, excluding the message.go file itself
 		if condition {
 			fileFound, err := SearchKeyInFile(path, searchKey)
