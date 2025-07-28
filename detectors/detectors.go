@@ -5,6 +5,7 @@ func RunAll(path string) {
 	DetectUnusedConstants(path)
 	DetectUnusedMessages(path)
 	DetectUnDefinedMessageKeys(path)
+	DetectCapitalVars(path)
 	RunDeadCode(path)
 	// DetectFuncWithManyParams(path)
 }
