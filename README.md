@@ -16,8 +16,9 @@ Whether you're working on large enterprise codebases or tight microservices, **A
 - 🔍 Spot unused keys in `Messages`, `FailMessages`, etc.  
 - 🧼 Modular design – plug in more detectors easily  
 - 🚀 Detect the undefined keys used in messageMap in through out the project. 
+- 🧼 Detects capital variable names, function parameters and returning parameters.
+
 > ⚙️ More powerful static checks are coming in future versions!
-- ⚙️ Detects capital variable names, function parameters and returning parameters.
 
 ---
 
