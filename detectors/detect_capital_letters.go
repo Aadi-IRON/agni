@@ -75,7 +75,6 @@ func CheckFile(path string, fset *token.FileSet) {
 					}
 				}
 			}
-			fmt.Println("")
 		// MyVar := ...
 		case *ast.AssignStmt:
 			if stmt.Tok.String() == ":=" {
@@ -86,7 +85,6 @@ func CheckFile(path string, fset *token.FileSet) {
 					}
 				}
 			}
-			fmt.Println("")
 		// func FunctionName(Parameter Type) (ReturnType)
 		case *ast.FuncDecl:
 			// Function parameters
