@@ -14,6 +14,7 @@ import (
 
 // Detects unused params throughout the project.
 func DetectUnusedParams(filePath string) {
+	fmt.Println()
 	fmt.Println(config.BoldYellow + "🔍 Detecting unused function parameters :- ")
 	fmt.Println()
 	if filePath == "" {

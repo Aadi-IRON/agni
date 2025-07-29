@@ -20,9 +20,9 @@ func DetectCapitalVars(path string) {
 		fmt.Println("Please pass a valid directory name.", path)
 		return
 	}
-
+	fmt.Println()
 	fmt.Printf(config.BoldBlue + "Detecting variables and function parameters with capital letters :---")
-
+	fmt.Println()
 	functionSet := token.NewFileSet()
 	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -43,9 +43,10 @@ func DetectCapitalVars(path string) {
 		return nil
 	})
 	fmt.Println()
-	fmt.Println(config.Green + "FINISHED")
 	fmt.Println()
+	fmt.Println(config.Green + "FINISHED")
 	fmt.Println(config.Reset + "----------------------------")
+	fmt.Println()
 	if err != nil {
 		log.Fatal(err)
 	}
