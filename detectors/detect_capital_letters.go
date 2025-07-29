@@ -57,39 +57,16 @@ func CheckFile(path string, fset *token.FileSet) {
 		return
 	}
 
+	// Track if we're inside a function
+	var insideFunction bool
+
 	ast.Inspect(node, func(astNode ast.Node) bool {
 		switch stmt := astNode.(type) {
 
-		case *ast.GenDecl:
-			if stmt.Tok == token.CONST {
-				// Skip all constants
-				return true
-			}
-			if stmt.Tok == token.VAR {
-				// Handle var declarations
-				for _, specific := range stmt.Specs {
-					if valSpecific, ok := specific.(*ast.ValueSpec); ok {
-						for _, name := range valSpecific.Names {
-							if IsCapitalized(name.Name) {
-								position := fset.Position(name.Pos())
-								log.Printf(config.Yellow+"Capitalized variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", name.Name, position)
-							}
-						}
-					}
-				}
-			}
-		// MyVar := ...
-		case *ast.AssignStmt:
-			if stmt.Tok.String() == ":=" {
-				for _, lhs := range stmt.Lhs {
-					if ident, ok := lhs.(*ast.Ident); ok && IsCapitalized(ident.Name) {
-						position := fset.Position(ident.Pos())
-						log.Printf(config.Yellow+"Capitalized short variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", ident.Name, position)
-					}
-				}
-			}
-		// func FunctionName(Parameter Type) (ReturnType)
 		case *ast.FuncDecl:
+			// We're entering a function
+			insideFunction = true
+
 			// Function parameters
 			if stmt.Type.Params != nil {
 				for _, param := range stmt.Type.Params.List {
@@ -109,6 +86,46 @@ func CheckFile(path string, fset *token.FileSet) {
 							position := fset.Position(name.Pos())
 							log.Printf(config.Yellow+"Capitalized named return variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", name.Name, position)
 						}
+					}
+				}
+			}
+
+		case *ast.FuncLit:
+			// We're entering an anonymous function
+			insideFunction = true
+
+		case *ast.GenDecl:
+			if stmt.Tok == token.CONST {
+				// Skip all constants
+				return true
+			}
+			// Handle var declarations based on context
+			if stmt.Tok == token.VAR {
+				if insideFunction {
+					// Local var declarations inside functions (should be checked)
+					for _, spec := range stmt.Specs {
+						if valSpec, ok := spec.(*ast.ValueSpec); ok {
+							for _, name := range valSpec.Names {
+								if IsCapitalized(name.Name) {
+									position := fset.Position(name.Pos())
+									log.Printf(config.Yellow+"Capitalized local variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", name.Name, position)
+								}
+							}
+						}
+					}
+				} else {
+					// Global variables (should be skipped - they should be capitalized)
+					return true
+				}
+			}
+
+		// MyVar := ... (local variables)
+		case *ast.AssignStmt:
+			if stmt.Tok.String() == ":=" {
+				for _, lhs := range stmt.Lhs {
+					if ident, ok := lhs.(*ast.Ident); ok && IsCapitalized(ident.Name) {
+						position := fset.Position(ident.Pos())
+						log.Printf(config.Yellow+"Capitalized short variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", ident.Name, position)
 					}
 				}
 			}
