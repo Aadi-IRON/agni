@@ -13,15 +13,23 @@ func RunDeadCode(path string) {
 	fmt.Println(config.CreateCompactBoxHeader("DEAD CODE", config.BoldPurple))
 	fmt.Println()
 	fmt.Println(config.Purple + "🔍 Scanning for dead code... Time to clean the skeletons from your closet 🧹")
+
 	// Check if 'deadcode' is available in PATH
-	_, err := exec.LookPath(config.BoldYellow + "deadcode")
+	_, err := exec.LookPath("deadcode")
 	if err != nil {
 		fmt.Println("⚠️  'deadcode' not found. Attempting to install it...")
+
+		// Create spinner for installation
+		spinner := config.NewSpinner("📦 Installing deadcode tool")
+		spinner.Start()
 
 		// Attempt to install it using `go install`
 		installCmd := exec.Command("go", "install", "golang.org/x/tools/cmd/deadcode@latest")
 		installCmd.Env = os.Environ() // inherit user's env
 		output, installErr := installCmd.CombinedOutput()
+
+		spinner.Stop()
+
 		if installErr != nil {
 			fmt.Println(config.Red+"❌ Failed to install 'deadcode':", string(output))
 			return
@@ -29,9 +37,16 @@ func RunDeadCode(path string) {
 		fmt.Println(config.Green + "✅ 'deadcode' installed successfully.")
 	}
 
+	// Create spinner for analysis
+	spinner := config.NewSpinner("🧠 Analyzing code for dead functions")
+	spinner.Start()
+
 	// Now run deadcode on the provided path
 	cmd := exec.Command("deadcode", path)
 	output, err := cmd.CombinedOutput()
+
+	spinner.Stop()
+
 	if err != nil {
 		fmt.Println("❌ Error running 'deadcode':", err)
 	}
