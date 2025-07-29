@@ -45,7 +45,7 @@ func DetectCapitalVars(path string) {
 	fmt.Println()
 	fmt.Println()
 	fmt.Println(config.Green + "FINISHED")
-	fmt.Println(config.Reset + "----------------------------")
+	fmt.Println(config.CreateDetectorSeparator("CAPITAL LETTERS", config.BoldBlue))
 	fmt.Println()
 	if err != nil {
 		log.Fatal(err)

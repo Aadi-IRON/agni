@@ -43,4 +43,5 @@ func RunDeadCode(path string) {
 		fmt.Println(config.Purple + "⚠️  Note: Some functions may be falsely flagged as unused.")
 		fmt.Println(config.Purple + ">>> Always cross-check before deletion to avoid accidental removal of valid code.")
 	}
+	fmt.Println(config.CreateDetectorSeparator("DEAD CODE", config.BoldPurple))
 }

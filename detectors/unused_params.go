@@ -24,7 +24,7 @@ func DetectUnusedParams(filePath string) {
 	if err := ProcessDirectory(filePath); err != nil {
 		fmt.Println("Error occurred :", err)
 	}
-	fmt.Println(config.Reset + "----------------------------")
+	fmt.Println(config.CreateDetectorSeparator("UNUSED PARAMETERS", config.BoldYellow))
 }
 
 // ProcessDirectory processes all .go files in the specified directory.

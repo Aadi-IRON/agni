@@ -70,10 +70,10 @@ func DetectUnDefinedMessageKeys(filePath string) {
 	}
 	if missing == 0 {
 		fmt.Println(config.Cyan + "🎉 No missing keys! Everything is defined.")
-		fmt.Println(config.Reset + "----------------------------")
+		fmt.Println(config.CreateDetectorSeparator("UNDEFINED MESSAGE KEYS", config.BoldPurple))
 		return
 	}
-	fmt.Println(config.Reset + "----------------------------")
+	fmt.Println(config.CreateDetectorSeparator("UNDEFINED MESSAGE KEYS", config.BoldPurple))
 }
 
 func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
@@ -84,13 +84,13 @@ func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
 		return
 	}
 
-	ast.Inspect(node, func(n ast.Node) bool {
-		indexExpr, ok := n.(*ast.IndexExpr)
+	ast.Inspect(node, func(num ast.Node) bool {
+		indexExp, ok := num.(*ast.IndexExpr)
 		if !ok {
 			return true
 		}
 
-		selector, ok := indexExpr.X.(*ast.SelectorExpr)
+		selector, ok := indexExp.X.(*ast.SelectorExpr)
 		if !ok {
 			return true
 		}
@@ -102,7 +102,7 @@ func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
 
 		for _, mapName := range targetMaps {
 			if selector.Sel.Name == mapName {
-				keyLit, ok := indexExpr.Index.(*ast.BasicLit)
+				keyLit, ok := indexExp.Index.(*ast.BasicLit)
 				if ok && keyLit.Kind == token.STRING {
 					key := strings.Trim(keyLit.Value, `"`)
 					usedKeys[key] = struct{}{}
@@ -122,8 +122,8 @@ func CollectDefinedKeys(filePath string, definedKeys map[string]struct{}) {
 		return
 	}
 
-	ast.Inspect(node, func(n ast.Node) bool {
-		vspec, ok := n.(*ast.ValueSpec)
+	ast.Inspect(node, func(num ast.Node) bool {
+		vspec, ok := num.(*ast.ValueSpec)
 		if !ok {
 			return true
 		}
