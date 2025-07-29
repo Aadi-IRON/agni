@@ -21,7 +21,7 @@ var targetMaps = []string{
 }
 
 func DetectUnDefinedMessageKeys(filePath string) {
-	fmt.Println(config.CreateDetectorSeparator("UNDEFINED MESSAGE KEYS", config.BoldPurple))
+	fmt.Println(config.CreateCompactBoxHeader("UNDEFINED MESSAGE KEYS", config.BoldPurple))
 	if filePath == "" {
 		fmt.Println("❌ Please enter a valid project folder name.")
 		return
@@ -73,6 +73,7 @@ func DetectUnDefinedMessageKeys(filePath string) {
 		fmt.Println(config.Cyan + "🎉 No missing keys! Everything is defined.")
 		return
 	}
+	fmt.Println()
 }
 
 func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {

@@ -86,3 +86,89 @@ func CreateDetectorSeparator(detectorName string, color string) string {
 	}
 	return color + prefix + suffix + Reset
 }
+
+// CreateBoxHeader creates a beautiful box-style header for detector names
+func CreateBoxHeader(title string, color string) string {
+	width := GetTerminalWidth()
+	boxWidth := width - 4 // Leave 2 spaces on each side
+
+	// Calculate padding for centered title
+	titleLen := len(title)
+	padding := (boxWidth - titleLen) / 2
+	leftPadding := padding
+	rightPadding := boxWidth - titleLen - leftPadding
+
+	// Create the box
+	topLine := "╭" + strings.Repeat("─", boxWidth) + "╮"
+	titleLine := "│" + strings.Repeat(" ", leftPadding) + title + strings.Repeat(" ", rightPadding) + "│"
+	bottomLine := "╰" + strings.Repeat("─", boxWidth) + "╯"
+
+	return color + topLine + "\n" + titleLine + "\n" + bottomLine + Reset
+}
+
+// CreateSimpleBoxHeader creates a simpler box header with straight corners
+func CreateSimpleBoxHeader(title string, color string) string {
+	width := GetTerminalWidth()
+	boxWidth := width - 4 // Leave 2 spaces on each side
+
+	// Calculate padding for centered title
+	titleLen := len(title)
+	padding := (boxWidth - titleLen) / 2
+	leftPadding := padding
+	rightPadding := boxWidth - titleLen - leftPadding
+
+	// Create the box
+	topLine := "┌" + strings.Repeat("─", boxWidth) + "┐"
+	titleLine := "│" + strings.Repeat(" ", leftPadding) + title + strings.Repeat(" ", rightPadding) + "│"
+	bottomLine := "└" + strings.Repeat("─", boxWidth) + "┘"
+
+	return color + topLine + "\n" + titleLine + "\n" + bottomLine + Reset
+}
+
+// CreateFancyBoxHeader creates a fancy box header with double lines
+func CreateFancyBoxHeader(title string, color string) string {
+	width := GetTerminalWidth()
+	boxWidth := width - 4 // Leave 2 spaces on each side
+
+	// Ensure title doesn't exceed box width
+	if len(title) > boxWidth-2 {
+		title = title[:boxWidth-5] + "..."
+	}
+
+	// Calculate padding for centered title
+	titleLen := len(title)
+	padding := (boxWidth - titleLen) / 2
+	leftPadding := padding
+	rightPadding := boxWidth - titleLen - leftPadding
+
+	// Create the box with double lines
+	topLine := "╔" + strings.Repeat("═", boxWidth) + "╗"
+	titleLine := "║" + strings.Repeat(" ", leftPadding) + title + strings.Repeat(" ", rightPadding) + "║"
+	bottomLine := "╚" + strings.Repeat("═", boxWidth) + "╝"
+
+	return color + topLine + "\n" + titleLine + "\n" + bottomLine + Reset
+}
+
+// CreateCompactBoxHeader creates a compact box header that fits better in terminals
+func CreateCompactBoxHeader(title string, color string) string {
+	// Use a fixed width for better compatibility
+	boxWidth := 60
+
+	// Ensure title doesn't exceed box width
+	if len(title) > boxWidth-4 {
+		title = title[:boxWidth-7] + "..."
+	}
+
+	// Calculate padding for centered title
+	titleLen := len(title)
+	padding := (boxWidth - titleLen) / 2
+	leftPadding := padding
+	rightPadding := boxWidth - titleLen - leftPadding
+
+	// Create the box
+	topLine := "┌" + strings.Repeat("─", boxWidth) + "┐"
+	titleLine := "│" + strings.Repeat(" ", leftPadding) + title + strings.Repeat(" ", rightPadding) + "│"
+	bottomLine := "└" + strings.Repeat("─", boxWidth) + "┘"
+
+	return color + topLine + "\n" + titleLine + "\n" + bottomLine + Reset
+}

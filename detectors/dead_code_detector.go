@@ -10,7 +10,7 @@ import (
 
 // RunDeadCode checks if dead code is installed; if not, it installs it, then runs it
 func RunDeadCode(path string) {
-	fmt.Println(config.CreateDetectorSeparator("DEAD CODE", config.BoldPurple))
+	fmt.Println(config.CreateCompactBoxHeader("DEAD CODE", config.BoldPurple))
 	fmt.Println()
 	fmt.Println(config.Purple + "🔍 Scanning for dead code... Time to clean the skeletons from your closet 🧹")
 	// Check if 'deadcode' is available in PATH

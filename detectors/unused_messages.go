@@ -15,12 +15,14 @@ import (
 
 // Detects unused messages throughout the directory.
 func DetectUnusedMessages(filePath string) {
-	fmt.Println(config.CreateDetectorSeparator("UNUSED MESSAGES", config.BoldCyan))
+	fmt.Println(config.CreateCompactBoxHeader("UNUSED MESSAGES", config.BoldCyan))
 	fmt.Println()
 	if filePath == "" {
 		fmt.Println("Please pass a valid directory path. ")
 		return
 	}
+	fmt.Println(config.BoldYellow + "🔍 Detecting unused messages (Declared but not used):")
+	fmt.Println()
 	// Extract all keys from the Messages map in message.go
 	keys, err := ExtractKeysFromMessages(filePath + "/config/message.go")
 	messageFileName := "message.go"
@@ -62,6 +64,7 @@ func DetectUnusedMessages(filePath string) {
 			fmt.Println(config.Red+"- ", key)
 		}
 	}
+	fmt.Println()
 }
 
 // SearchKeyInProject searches for a specific key across all .go files in the project
