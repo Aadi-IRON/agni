@@ -10,6 +10,8 @@ import (
 
 // RunDeadCode checks if dead code is installed; if not, it installs it, then runs it
 func RunDeadCode(path string) {
+	fmt.Println(config.CreateDetectorSeparator("DEAD CODE", config.BoldPurple))
+	fmt.Println()
 	fmt.Println(config.Purple + "🔍 Scanning for dead code... Time to clean the skeletons from your closet 🧹")
 	// Check if 'deadcode' is available in PATH
 	_, err := exec.LookPath(config.BoldYellow + "deadcode")
@@ -36,6 +38,7 @@ func RunDeadCode(path string) {
 	if len(output) == 0 {
 		fmt.Println(config.BoldGreen + "✅ No dead code found.")
 	} else {
+		fmt.Println()
 		fmt.Println(config.BoldYellow + "🧠 Deadcode report:")
 		fmt.Println()
 		fmt.Println(config.Red + string(output))
@@ -43,5 +46,4 @@ func RunDeadCode(path string) {
 		fmt.Println(config.Purple + "⚠️  Note: Some functions may be falsely flagged as unused.")
 		fmt.Println(config.Purple + ">>> Always cross-check before deletion to avoid accidental removal of valid code.")
 	}
-	fmt.Println(config.CreateDetectorSeparator("DEAD CODE", config.BoldPurple))
 }

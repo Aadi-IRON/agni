@@ -12,6 +12,7 @@ import (
 
 // Detects all unused constants present in the directory.
 func DetectUnusedConstants(filePath string) {
+	fmt.Println(config.CreateDetectorSeparator("UNUSED CONSTANTS", config.BoldGreen))
 	if filePath == "" {
 		fmt.Println("Please pass a valid directory path.")
 		return
@@ -26,7 +27,6 @@ func DetectUnusedConstants(filePath string) {
 	if len(unusedConsts) == 0 {
 		fmt.Println()
 		fmt.Println(config.BoldGreen + "✅  All constants in const.go are used in the project.")
-		fmt.Println(config.CreateDetectorSeparator("UNUSED CONSTANTS", config.BoldGreen))
 		return
 	}
 	fmt.Println()
@@ -34,7 +34,6 @@ func DetectUnusedConstants(filePath string) {
 	for _, constant := range unusedConsts {
 		fmt.Printf(config.Red+"- %s\n", constant)
 	}
-	fmt.Println(config.CreateDetectorSeparator("UNUSED CONSTANTS", config.BoldGreen))
 }
 
 // SearchConstantInProject checks if a constant is used in any `.go` file (excluding `const.go`).

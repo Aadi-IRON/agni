@@ -14,6 +14,7 @@ import (
 
 // Detects unused params throughout the project.
 func DetectUnusedParams(filePath string) {
+	fmt.Println(config.CreateDetectorSeparator("UNUSED PARAMETERS", config.BoldYellow))
 	fmt.Println()
 	fmt.Println(config.BoldYellow + "🔍 Detecting unused function parameters :- ")
 	fmt.Println()
@@ -24,7 +25,6 @@ func DetectUnusedParams(filePath string) {
 	if err := ProcessDirectory(filePath); err != nil {
 		fmt.Println("Error occurred :", err)
 	}
-	fmt.Println(config.CreateDetectorSeparator("UNUSED PARAMETERS", config.BoldYellow))
 }
 
 // ProcessDirectory processes all .go files in the specified directory.

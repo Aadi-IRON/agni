@@ -15,6 +15,8 @@ import (
 )
 
 func DetectCapitalVars(path string) {
+	fmt.Println(config.CreateDetectorSeparator("CAPITAL LETTERS", config.BoldBlue))
+
 	fmt.Println()
 	if path == "" {
 		fmt.Println("Please pass a valid directory name.", path)
@@ -45,8 +47,6 @@ func DetectCapitalVars(path string) {
 	fmt.Println()
 	fmt.Println()
 	fmt.Println(config.Green + "FINISHED")
-	fmt.Println(config.CreateDetectorSeparator("CAPITAL LETTERS", config.BoldBlue))
-	fmt.Println()
 	if err != nil {
 		log.Fatal(err)
 	}

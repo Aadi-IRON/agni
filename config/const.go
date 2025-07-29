@@ -35,7 +35,7 @@ func GetTerminalWidth() int {
 	}
 
 	// Default width if we can't determine
-	return 80
+	return 120
 }
 
 // CreateSeparator creates a full-width separator with the given character and color
