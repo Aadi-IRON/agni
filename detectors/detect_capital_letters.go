@@ -122,8 +122,15 @@ func CheckFile(path string, fset *token.FileSet) {
 		// MyVar := ... (local variables)
 		case *ast.AssignStmt:
 			if stmt.Tok.String() == ":=" {
-				for _, lhs := range stmt.Lhs {
+				for idx, lhs := range stmt.Lhs {
 					if ident, ok := lhs.(*ast.Ident); ok && IsCapitalized(ident.Name) {
+						// Check if this is a struct literal (should be excluded)
+						if idx < len(stmt.Rhs) {
+							if _, isStructLit := stmt.Rhs[idx].(*ast.CompositeLit); isStructLit {
+								// This is a struct literal, skip it
+								continue
+							}
+						}
 						position := fset.Position(ident.Pos())
 						log.Printf(config.Yellow+"Capitalized short variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", ident.Name, position)
 					}
