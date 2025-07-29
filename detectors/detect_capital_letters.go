@@ -15,6 +15,7 @@ import (
 )
 
 func DetectCapitalVars(path string) {
+	fmt.Println()
 	if path == "" {
 		fmt.Println("Please pass a valid directory name.", path)
 		return
@@ -41,7 +42,9 @@ func DetectCapitalVars(path string) {
 		CheckFile(path, functionSet)
 		return nil
 	})
+	fmt.Println()
 	fmt.Println(config.Green + "FINISHED")
+	fmt.Println()
 	fmt.Println(config.Reset + "----------------------------")
 	if err != nil {
 		log.Fatal(err)

@@ -14,6 +14,8 @@ import (
 
 // Detects unused params throughout the project.
 func DetectUnusedParams(filePath string) {
+	fmt.Println(config.BoldYellow + "🔍 Detecting unused function parameters :- ")
+	fmt.Println()
 	if filePath == "" {
 		fmt.Println("Please pass a valid directory path. ")
 		return
@@ -80,7 +82,7 @@ func AnalyzeFunc(function *ast.FuncDecl, fileName string) {
 	MarkUsedVars(function.Body, varUsed)
 	// Collect and print unused variables
 	if unusedVars := GetUnusedVars(varUsed); len(unusedVars) > 0 {
-		fmt.Printf(config.Yellow+"File '%s': Function '%s' has unused variables: %s\n", fileName, function.Name.Name, strings.Join(unusedVars, ", "))
+		fmt.Printf(config.Yellow+"File '%s':"+config.Purple+" Function '%s' has unused variables: "+config.Red+"%s\n", fileName, function.Name.Name, strings.Join(unusedVars, ", "))
 	}
 }
 

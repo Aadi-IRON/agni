@@ -24,13 +24,15 @@ func DetectUnusedConstants(filePath string) {
 	}
 	// Output results
 	if len(unusedConsts) == 0 {
-		fmt.Println(config.Green + "✅  All constants in const.go are used in the project.")
+		fmt.Println()
+		fmt.Println(config.BoldGreen + "✅  All constants in const.go are used in the project.")
+		fmt.Println(config.Reset + "----------------------------")
 		return
 	}
 	fmt.Println()
 	fmt.Println(config.BoldYellow + "Unused constants in const.go:-> ")
 	for _, constant := range unusedConsts {
-		fmt.Printf("- %s\n", constant)
+		fmt.Printf(config.Red+"- %s\n", constant)
 	}
 	fmt.Println(config.Reset + "----------------------------")
 }

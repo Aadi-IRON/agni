@@ -60,6 +60,7 @@ func DetectUnDefinedMessageKeys(filePath string) {
 	fmt.Println()
 	// Compare and report
 	fmt.Println(config.BoldYellow + "🔍 Missing Keys (Used but not defined):")
+	fmt.Println()
 	missing := 0
 	for key := range usedKeys {
 		if _, found := definedKeys[key]; !found {
@@ -69,7 +70,7 @@ func DetectUnDefinedMessageKeys(filePath string) {
 	}
 	if missing == 0 {
 		fmt.Println(config.Cyan + "🎉 No missing keys! Everything is defined.")
-		fmt.Println("----------------------------")
+		fmt.Println(config.Reset + "----------------------------")
 		return
 	}
 	fmt.Println(config.Reset + "----------------------------")

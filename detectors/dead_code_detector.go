@@ -37,8 +37,10 @@ func RunDeadCode(path string) {
 		fmt.Println(config.BoldGreen + "✅ No dead code found.")
 	} else {
 		fmt.Println(config.BoldYellow + "🧠 Deadcode report:")
-		fmt.Println(string(output))
-		fmt.Println("⚠️  Note: Some functions may be falsely flagged as unused.")
-		fmt.Println(">>> Always cross-check before deletion to avoid accidental removal of valid code.")
+		fmt.Println()
+		fmt.Println(config.Red + string(output))
+		fmt.Println()
+		fmt.Println(config.Purple + "⚠️  Note: Some functions may be falsely flagged as unused.")
+		fmt.Println(config.Purple + ">>> Always cross-check before deletion to avoid accidental removal of valid code.")
 	}
 }

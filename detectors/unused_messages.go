@@ -15,6 +15,7 @@ import (
 
 // Detects unused messages throughout the directory.
 func DetectUnusedMessages(filePath string) {
+	fmt.Println()
 	if filePath == "" {
 		fmt.Println("Please pass a valid directory path. ")
 		return
@@ -53,11 +54,12 @@ func DetectUnusedMessages(filePath string) {
 	// Print results
 	if len(unusedKeys) == 0 {
 		fmt.Println(config.BoldGreen + "✅  All keys in messages.go file are used in the project.")
+		fmt.Println()
 	} else {
 		fmt.Println()
 		fmt.Println(config.BoldYellow + "Unused keys in messages.go file:-> ")
 		for _, key := range unusedKeys {
-			fmt.Println("- ", key)
+			fmt.Println(config.Red+"- ", key)
 		}
 	}
 	fmt.Println(config.Reset + "----------------------------")
