@@ -8,6 +8,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/Aadi-IRON/agni/config"
 )
 
 // Detects unused params throughout the project.
@@ -19,7 +21,7 @@ func DetectUnusedParams(filePath string) {
 	if err := ProcessDirectory(filePath); err != nil {
 		fmt.Println("Error occurred :", err)
 	}
-	fmt.Println("----------------------------")
+	fmt.Println(config.Reset + "----------------------------")
 }
 
 // ProcessDirectory processes all .go files in the specified directory.
@@ -78,7 +80,7 @@ func AnalyzeFunc(function *ast.FuncDecl, fileName string) {
 	MarkUsedVars(function.Body, varUsed)
 	// Collect and print unused variables
 	if unusedVars := GetUnusedVars(varUsed); len(unusedVars) > 0 {
-		fmt.Printf("File '%s': Function '%s' has unused variables: %s\n", fileName, function.Name.Name, strings.Join(unusedVars, ", "))
+		fmt.Printf(config.Yellow+"File '%s': Function '%s' has unused variables: %s\n", fileName, function.Name.Name, strings.Join(unusedVars, ", "))
 	}
 }
 

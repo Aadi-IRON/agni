@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/Aadi-IRON/agni/config"
 )
 
 // Detects all unused constants present in the directory.
@@ -22,15 +24,15 @@ func DetectUnusedConstants(filePath string) {
 	}
 	// Output results
 	if len(unusedConsts) == 0 {
-		fmt.Println("✅  All constants in const.go are used in the project.")
+		fmt.Println(config.Green + "✅  All constants in const.go are used in the project.")
 		return
 	}
 	fmt.Println()
-	fmt.Println("Unused constants in const.go:-> ")
+	fmt.Println(config.BoldYellow + "Unused constants in const.go:-> ")
 	for _, constant := range unusedConsts {
 		fmt.Printf("- %s\n", constant)
 	}
-	fmt.Println("----------------------------")
+	fmt.Println(config.Reset + "----------------------------")
 }
 
 // SearchConstantInProject checks if a constant is used in any `.go` file (excluding `const.go`).

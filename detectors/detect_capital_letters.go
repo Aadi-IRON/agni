@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"unicode"
+
+	"github.com/Aadi-IRON/agni/config"
 )
 
 func DetectCapitalVars(path string) {
@@ -18,7 +20,7 @@ func DetectCapitalVars(path string) {
 		return
 	}
 
-	fmt.Printf("Analyzing Go files in project: %s\n\n", path)
+	fmt.Printf(config.BoldBlue + "Detecting variables and function parameters with capital letters :---")
 
 	functionSet := token.NewFileSet()
 	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
@@ -39,8 +41,8 @@ func DetectCapitalVars(path string) {
 		CheckFile(path, functionSet)
 		return nil
 	})
-	fmt.Println("FINISHED")
-	fmt.Println("----------------------------")
+	fmt.Println(config.Green + "FINISHED")
+	fmt.Println(config.Reset + "----------------------------")
 	if err != nil {
 		log.Fatal(err)
 	}
