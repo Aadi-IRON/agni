@@ -54,7 +54,6 @@ func DetectUnusedMessages(filePath string) {
 	// Print results
 	if len(unusedKeys) == 0 {
 		fmt.Println(config.BoldGreen + "✅  All keys in messages.go file are used in the project.")
-		fmt.Println()
 	} else {
 		fmt.Println()
 		fmt.Println(config.BoldYellow + "Unused keys in messages.go file:-> ")
