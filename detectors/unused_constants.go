@@ -12,11 +12,9 @@ import (
 
 // Detects all unused constants present in the directory.
 func DetectUnusedConstants(filePath string) {
-	fmt.Println()
 	fmt.Println(config.CreateCompactBoxHeader("UNUSED CONSTANTS", config.BoldGreen))
 	fmt.Println()
 	fmt.Println(config.BoldYellow + "🔍 Detecting unused constants (Declared but not used):")
-	fmt.Println()
 	if filePath == "" {
 		fmt.Println("Please pass a valid directory path.")
 		return
@@ -31,6 +29,7 @@ func DetectUnusedConstants(filePath string) {
 	if len(unusedConsts) == 0 {
 		fmt.Println()
 		fmt.Println(config.BoldGreen + "✅  All constants in const.go are used in the project.")
+		fmt.Println()
 		return
 	}
 	fmt.Println()
