@@ -72,7 +72,7 @@ func CheckFile(path string, fset *token.FileSet) {
 						for _, name := range valSpecific.Names {
 							if IsCapitalized(name.Name) {
 								position := fset.Position(name.Pos())
-								log.Printf("Capitalized variable '%s' at %s\n", name.Name, position)
+								log.Printf(config.Yellow+"Capitalized variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", name.Name, position)
 							}
 						}
 					}
@@ -84,7 +84,7 @@ func CheckFile(path string, fset *token.FileSet) {
 				for _, lhs := range stmt.Lhs {
 					if ident, ok := lhs.(*ast.Ident); ok && IsCapitalized(ident.Name) {
 						position := fset.Position(ident.Pos())
-						log.Printf("Capitalized short variable '%s' at %s\n", ident.Name, position)
+						log.Printf(config.Yellow+"Capitalized short variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", ident.Name, position)
 					}
 				}
 			}
@@ -96,7 +96,7 @@ func CheckFile(path string, fset *token.FileSet) {
 					for _, name := range param.Names {
 						if IsCapitalized(name.Name) {
 							position := fset.Position(name.Pos())
-							log.Printf("Capitalized function parameter '%s' at %s\n", name.Name, position)
+							log.Printf(config.Yellow+"Capitalized function parameter"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", name.Name, position)
 						}
 					}
 				}
@@ -107,7 +107,7 @@ func CheckFile(path string, fset *token.FileSet) {
 					for _, name := range result.Names {
 						if IsCapitalized(name.Name) {
 							position := fset.Position(name.Pos())
-							log.Printf("Capitalized named return variable '%s' at %s\n", name.Name, position)
+							log.Printf(config.Yellow+"Capitalized named return variable"+config.BoldRed+" '%s'"+config.Yellow+" at %s\n", name.Name, position)
 						}
 					}
 				}
