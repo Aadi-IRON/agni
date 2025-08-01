@@ -17,6 +17,7 @@ Whether you're working on large enterprise codebases or tight microservices, **A
 - 🧼 Modular design – plug in more detectors easily  
 - 🚀 Detect the undefined keys used in messageMap in through out the project. 
 - 🧼 Detects capital variable names, function parameters and returning parameters.
+- 📁 Detects the packages that are used in the code base but actually are deprecated by golang or organization standards. 
 
 > ⚙️ More powerful static checks are coming in future versions!
 
