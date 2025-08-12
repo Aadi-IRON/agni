@@ -7,7 +7,7 @@ func RunAll(path string) {
 	DetectUnDefinedMessageKeys(path)
 	DetectCapitalVars(path)
 	DetectDeprecatedPackages(path)
-	DetectUnexportedFuncNames(path)
+	DetectExportedButInternalFuncs(path)
 	RunDeadCode(path)
 	// DetectFuncWithManyParams(path)
 }
