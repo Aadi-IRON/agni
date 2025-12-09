@@ -21,8 +21,8 @@ var targetMaps = []string{
 }
 
 func isTargetMap(name string) bool {
-	for _, singleMap := range targetMaps {
-		if name == singleMap {
+	for _, m := range targetMaps {
+		if name == m {
 			return true
 		}
 	}
@@ -56,7 +56,6 @@ func DetectUnDefinedMessageKeys(filePath string) {
 		}
 		return nil
 	})
-
 	if err != nil {
 		fmt.Printf("Error walking files: %v\n", err)
 		return
@@ -87,8 +86,8 @@ func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
 		return
 	}
 
-	ast.Inspect(node, func(node ast.Node) bool {
-		idx, ok := node.(*ast.IndexExpr)
+	ast.Inspect(node, func(n ast.Node) bool {
+		idx, ok := n.(*ast.IndexExpr)
 		if !ok {
 			return true
 		}
@@ -101,7 +100,7 @@ func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
 				}
 			}
 		case *ast.Ident:
-			// Handles in-package lookups like Messages["key"]
+			// In-package use: Messages["key"]
 			if isTargetMap(x.Name) {
 				if lit, ok := idx.Index.(*ast.BasicLit); ok && lit.Kind == token.STRING {
 					usedKeys[strings.Trim(lit.Value, `"`)] = struct{}{}
@@ -120,20 +119,21 @@ func CollectDefinedKeys(filePath string, definedKeys map[string]struct{}) {
 		return
 	}
 
-	ast.Inspect(node, func(node ast.Node) bool {
-		vspec, ok := node.(*ast.ValueSpec)
+	ast.Inspect(node, func(n ast.Node) bool {
+		vspec, ok := n.(*ast.ValueSpec)
 		if !ok {
 			return true
 		}
 
-		// Only consider variables whose name matches a target map
-		var names []string
+		// Only consider target map vars
+		target := false
 		for _, name := range vspec.Names {
 			if isTargetMap(name.Name) {
-				names = append(names, name.Name)
+				target = true
+				break
 			}
 		}
-		if len(names) == 0 {
+		if !target {
 			return true
 		}
 
@@ -142,8 +142,13 @@ func CollectDefinedKeys(filePath string, definedKeys map[string]struct{}) {
 			if !ok {
 				continue
 			}
-			if _, ok := cl.Type.(*ast.MapType); !ok {
-				continue
+
+			// Accept map literals, named map types, selector types, or elided types
+			switch cl.Type.(type) {
+			case *ast.MapType, *ast.Ident, *ast.SelectorExpr, nil:
+				// ok
+			default:
+				// still walk keys; being permissive avoids missing aliased types
 			}
 
 			for _, elt := range cl.Elts {
