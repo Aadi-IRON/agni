@@ -40,29 +40,30 @@ func DetectUnusedConstants(filePath string) {
 	fmt.Println()
 }
 
-// SearchConstantInProject checks if a constant is used in any `.go` file (excluding `const.go`).
+// SearchConstantInProject checks if a constant is used in any `.go` file.
 func SearchConstantInProject(projectDir, constant, excludeFile string) (bool, error) {
 	found := false
 	err := filepath.Walk(projectDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		// Skip directories and the excludeFile (`const.go`)
-		if info.IsDir() || strings.HasSuffix(path, excludeFile) || !strings.HasSuffix(path, ".go") {
+		// Skip directories; keep all .go files, including the const file.
+		if info.IsDir() || !strings.HasSuffix(path, ".go") {
 			return nil
 		}
-		// Search the constant in the file
+
 		file, err := os.Open(path)
 		if err != nil {
 			return err
 		}
 		defer file.Close()
+
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
 			line := scanner.Text()
 			if strings.Contains(line, constant) {
 				found = true
-				return nil // Found, no need to scan further
+				return nil // Found, stop scanning this file
 			}
 		}
 		return nil

@@ -20,6 +20,15 @@ var targetMaps = []string{
 	"BugsnagMessages",
 }
 
+func isTargetMap(name string) bool {
+	for _, singleMap := range targetMaps {
+		if name == singleMap {
+			return true
+		}
+	}
+	return false
+}
+
 func DetectUnDefinedMessageKeys(filePath string) {
 	fmt.Println(config.CreateCompactBoxHeader("UNDEFINED MESSAGE KEYS", config.BoldPurple))
 	if filePath == "" {
@@ -35,21 +44,16 @@ func DetectUnDefinedMessageKeys(filePath string) {
 			fmt.Printf("Error reading file %s: %v\n", path, err)
 			return nil
 		}
-
-		if !strings.HasSuffix(path, ".go") {
+		if info.IsDir() || !strings.HasSuffix(path, ".go") {
 			return nil
 		}
 
-		// Get base name of the file and check if it matches any message file pattern
-		base := filepath.Base(path)
-		lower := strings.ToLower(base)
-
-		if lower == "message.go" || lower == "messages.go" {
+		base := strings.ToLower(filepath.Base(path))
+		if base == "message.go" || base == "messages.go" {
 			CollectDefinedKeys(path, definedKeys)
 		} else {
 			CollectUsedKeys(path, usedKeys)
 		}
-
 		return nil
 	})
 
@@ -59,7 +63,6 @@ func DetectUnDefinedMessageKeys(filePath string) {
 	}
 
 	fmt.Println()
-	// Compare and report
 	fmt.Println(config.BoldYellow + "🔍 Missing Keys (Used but not defined):")
 	fmt.Println()
 	missing := 0
@@ -84,32 +87,27 @@ func CollectUsedKeys(filePath string, usedKeys map[string]struct{}) {
 		return
 	}
 
-	ast.Inspect(node, func(num ast.Node) bool {
-		indexExp, ok := num.(*ast.IndexExpr)
+	ast.Inspect(node, func(node ast.Node) bool {
+		idx, ok := node.(*ast.IndexExpr)
 		if !ok {
 			return true
 		}
 
-		selector, ok := indexExp.X.(*ast.SelectorExpr)
-		if !ok {
-			return true
-		}
-
-		ident, ok := selector.X.(*ast.Ident)
-		if !ok || ident.Name != "config" {
-			return true
-		}
-
-		for _, mapName := range targetMaps {
-			if selector.Sel.Name == mapName {
-				keyLit, ok := indexExp.Index.(*ast.BasicLit)
-				if ok && keyLit.Kind == token.STRING {
-					key := strings.Trim(keyLit.Value, `"`)
-					usedKeys[key] = struct{}{}
+		switch x := idx.X.(type) {
+		case *ast.SelectorExpr:
+			if isTargetMap(x.Sel.Name) {
+				if lit, ok := idx.Index.(*ast.BasicLit); ok && lit.Kind == token.STRING {
+					usedKeys[strings.Trim(lit.Value, `"`)] = struct{}{}
+				}
+			}
+		case *ast.Ident:
+			// Handles in-package lookups like Messages["key"]
+			if isTargetMap(x.Name) {
+				if lit, ok := idx.Index.(*ast.BasicLit); ok && lit.Kind == token.STRING {
+					usedKeys[strings.Trim(lit.Value, `"`)] = struct{}{}
 				}
 			}
 		}
-
 		return true
 	})
 }
@@ -122,37 +120,40 @@ func CollectDefinedKeys(filePath string, definedKeys map[string]struct{}) {
 		return
 	}
 
-	ast.Inspect(node, func(num ast.Node) bool {
-		vspec, ok := num.(*ast.ValueSpec)
+	ast.Inspect(node, func(node ast.Node) bool {
+		vspec, ok := node.(*ast.ValueSpec)
 		if !ok {
 			return true
 		}
 
+		// Only consider variables whose name matches a target map
+		var names []string
+		for _, name := range vspec.Names {
+			if isTargetMap(name.Name) {
+				names = append(names, name.Name)
+			}
+		}
+		if len(names) == 0 {
+			return true
+		}
+
 		for _, value := range vspec.Values {
-			compLit, ok := value.(*ast.CompositeLit)
+			cl, ok := value.(*ast.CompositeLit)
 			if !ok {
 				continue
 			}
-
-			_, ok = compLit.Type.(*ast.MapType)
-			if !ok {
+			if _, ok := cl.Type.(*ast.MapType); !ok {
 				continue
 			}
 
-			for _, elt := range compLit.Elts {
-				kv, ok := elt.(*ast.KeyValueExpr)
-				if !ok {
-					continue
-				}
-
-				keyLit, ok := kv.Key.(*ast.BasicLit)
-				if ok && keyLit.Kind == token.STRING {
-					key := strings.Trim(keyLit.Value, `"`)
-					definedKeys[key] = struct{}{}
+			for _, elt := range cl.Elts {
+				if kv, ok := elt.(*ast.KeyValueExpr); ok {
+					if lit, ok := kv.Key.(*ast.BasicLit); ok && lit.Kind == token.STRING {
+						definedKeys[strings.Trim(lit.Value, `"`)] = struct{}{}
+					}
 				}
 			}
 		}
-
 		return true
 	})
 }
